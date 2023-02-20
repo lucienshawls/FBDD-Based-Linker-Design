@@ -6,11 +6,12 @@ import time
 
 COMPOUND_LIST_PAGE = 'http://cadd.zju.edu.cn/protacdb/browse/compound'
 COMPOUND_PAGE = 'http://cadd.zju.edu.cn/protacdb/compound/dataset=protac&id='
-TOTAL = 5388
+TOTAL = 3270
 
 def compound(id):
     info = {
         'id': id,
+        'target': '',
         'protac': {
             'id': '',
             'smiles': ''
@@ -27,7 +28,6 @@ def compound(id):
             'id': '',
             'smiles': ''
         },
-        'target': '',
     }
     compound_page = 'http://cadd.zju.edu.cn/protacdb/compound/dataset=protac&id=%d' %(id)
 
@@ -68,24 +68,30 @@ def compound(id):
 
 def compound_list():
     tot = TOTAL
-    dataset = [[
-        'id',
-        'target',
-        'protac_id',
-        'protac_smiles',
-        'e3_ligand_id',
-        'e3_ligand_smiles',
-        'linker_id',
-        'linker_smiles',
-        'warhead_id',
-        'warhead_smiles',
-    ]]
+    dataset = []
+
+    with open('./data/protac.csv','w',encoding='utf-8-sig',newline='') as f:
+        writer = csv.writer(f)
+
+        cur_row = [
+            'id',
+            'protac_id',
+            'protac_smiles',
+            'e3_ligand_id',
+            'e3_ligand_smiles',
+            'linker_id',
+            'linker_smiles',
+            'warhead_id',
+            'warhead_smiles',
+            'target',
+        ]
+        writer.writerow(cur_row)
+
     for i in range (1,tot+1):
         print('Processing: %d/%d' %(i,tot))
         data = compound(i)
-        table_row = [
+        cur_row = [
             data['id'],
-            data['target'],
             data['protac']['id'],
             data['protac']['smiles'],
             data['e3_ligand']['id'],
@@ -94,17 +100,17 @@ def compound_list():
             data['linker']['smiles'],
             data['warhead']['id'],
             data['warhead']['smiles'],
+            data['target'],
         ]
-
-        dataset.append(table_row)
+        with open('./data/protac.csv','a',encoding='utf-8-sig',newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(cur_row)
+        dataset.append(data)
     
     return dataset
 
 def main():
-    table = compound_list()
-    with open('./data/protac.csv','w',encoding='utf-8-sig') as f:
-        writer = csv.writer(f)
-        writer.writerows(table)
+    dataset = compound_list()
 
 if __name__ == '__main__':
     main()
