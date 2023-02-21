@@ -1,11 +1,7 @@
 import requests
-import re
-import json
 import csv
-import time
 
 COMPOUND_LIST_PAGE = 'http://cadd.zju.edu.cn/protacdb/browse/compound'
-COMPOUND_PAGE = 'http://cadd.zju.edu.cn/protacdb/compound/dataset=protac&id='
 TOTAL = 3270
 
 def compound(id):
