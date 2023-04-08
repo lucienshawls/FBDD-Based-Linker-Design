@@ -66,6 +66,24 @@ def count_fragments(verification='skip',dataset_base_dir='./data/macfrag/protac/
 
     return res
 
+def rate_calc(valid_path='./data/results/total_valid_linker.csv', 
+              total_path='./data/results/total.csv'):
+    with open(valid_path,'r',encoding='utf-8') as f:
+        with open(total_path,'r',encoding='utf-8') as g:
+            valid = list(csv.DictReader(f))
+            total = list(csv.DictReader(g))
+            tot = len(total)
+            res = []
+            for i in range(tot):
+                detail = {'protac_id': total[i]['protac_id']}
+                for para in list(total[0].keys())[1:]:
+                    valid_value = int(valid[i][para])
+                    total_value = int(total[i][para])
+                    valid_rate = round(valid_value/total_value,3)
+                    detail[para] = valid_rate
+                res.append(detail)
+    return res
+
 def write_file(filename, mydict):
     with open(filename,'w',encoding='utf-8',newline='') as f:
         my_header = list(mydict[0].keys())
@@ -76,10 +94,11 @@ def write_file(filename, mydict):
 def main():
     # count = count_fragments()
     # write_file('./data/results/total.csv',count)
-    count = count_fragments('linker_validation')
-    write_file('./data/results/total_valid_linker.csv',count)
-    # a = is_valid('*c1ccccc1O*')
-    # print(a)
+    # count = count_fragments('linker_validation')
+    # write_file('./data/results/total_valid_linker.csv',count)
+    rate = rate_calc()
+    write_file('./data/results/valid_rate.csv',rate)
+
     pass
 
 
